@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Análisis de Hilos en Spring Boot</title>
+    <!-- Bootstrap 5 CDN -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-dark mb-4">
+    <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1">Análisis de Hilos · Spring Boot</span>
+    </div>
+</nav>
+
+<div class="container">
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-info">
+                <h4 class="alert-heading">Objetivo de la práctica</h4>
+                <p class="mb-1">
+                    Esta pantalla te ayudará a analizar los <strong>hilos de ejecución</strong>
+                    de una aplicación Spring Boot usando el <strong>Debugger</strong>.
+                </p>
+                <hr>
+                <p class="mb-0">
+                    Accede a esta URL en modo <code>Debug As → Spring Boot App</code> y sigue las instrucciones del
+                    enunciado: inspecciona los hilos, su <em>call stack</em> y su estado.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hilo que atiende la petición -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    Hilo de la petición (Tomcat)
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        El hilo que ha atendido esta petición es:
+                    </p>
+                    <p class="fs-5">
+                        <span class="badge bg-primary" th:text="${requestThread}">http-nio-8080-exec-X</span>
+                    </p>
+                    <p class="text-muted mb-0">
+                        Este hilo pertenece al <strong>pool de ejecución de Tomcat</strong>
+                        y es el encargado de ejecutar el controlador <code>/hilos</code>.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leyenda de tipos de hilos -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    Tipos de hilos que deberías ver en el Debugger
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <span class="badge bg-dark me-2">JVM</span>
+                            <strong>main, Finalizer, Reference Handler</strong><br>
+                            <small class="text-muted">Hilos internos de la máquina virtual Java.</small>
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge bg-success me-2">Tomcat</span>
+                            <strong>http-nio-8080-Acceptor, ClientPoller, exec-X</strong><br>
+                            <small class="text-muted">Hilos del servidor embebido que aceptan y atienden peticiones.</small>
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge bg-warning text-dark me-2">Aplicación</span>
+                            <strong>Analizador-logs, Generador-informes</strong><br>
+                            <small class="text-muted">Hilos creados por tu propio código usando lambdas.</small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hilos creados por el alumno -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    Hilo de análisis de logs
+                </div>
+                <div class="card-body">
+                    <p>Nombre del hilo:</p>
+                    <p class="fs-5">
+                        <span class="badge bg-warning text-dark" th:text="${analizadorName}">Analizador-logs</span>
+                    </p>
+                    <p>Prioridad:</p>
+                    <p>
+                        <span class="badge bg-light text-dark border" th:text="${analizadorPriority}">5</span>
+                    </p>
+                    <p class="text-muted mb-0">
+                        Este hilo simula un <strong>proceso de análisis de logs</strong> que tarda varios segundos.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    Hilo de generación de informes
+                </div>
+                <div class="card-body">
+                    <p>Nombre del hilo:</p>
+                    <p class="fs-5">
+                        <span class="badge bg-warning text-dark" th:text="${generadorName}">Generador-informes</span>
+                    </p>
+                    <p>Prioridad:</p>
+                    <p>
+                        <span class="badge bg-light text-dark border" th:text="${generadorPriority}">1</span>
+                    </p>
+                    <p class="text-muted mb-0">
+                        Este hilo simula la <strong>generación de informes</strong> en segundo plano.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Instrucciones para el alumnado -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    Guía rápida para el Debugger
+                </div>
+                <div class="card-body">
+                    <ol class="list-group list-group-numbered">
+                        <li class="list-group-item">
+                            Arranca la aplicación con <code>Debug As → Spring Boot App</code>.
+                        </li>
+                        <li class="list-group-item">
+                            Coloca un <strong>breakpoint</strong> en el método del controlador <code>/hilos</code>
+                            (por ejemplo, en la línea donde se crea el hilo <code>Analizador-logs</code>).
+                        </li>
+                        <li class="list-group-item">
+                            Accede a <code>http://localhost:8080/hilos</code> y espera a que el Debugger se detenga.
+                        </li>
+                        <li class="list-group-item">
+                            En la vista <strong>Debug</strong>, localiza:
+                            <ul>
+                                <li>Hilos del sistema (JVM): <code>main</code>, <code>Finalizer</code>, etc.</li>
+                                <li>Hilos de Tomcat: <code>http-nio-8080-...</code></li>
+                                <li>Hilos de la aplicación: <code>Analizador-logs</code>, <code>Generador-informes</code></li>
+                            </ul>
+                        </li>
+                        <li class="list-group-item">
+                            Selecciona cada hilo, observa su <em>call stack</em> y su <strong>estado</strong>
+                            (<code>RUNNABLE</code>, <code>TIMED_WAITING</code>, <code>TERMINATED</code>...).
+                        </li>
+                        <li class="list-group-item">
+                            Identifica cuál de ellos ejecuta el controlador <code>/hilos</code>
+                            (pista: será uno de los <code>http-nio-8080-exec-X</code>).
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">
+</script>
+</body>
+</html>
