@@ -1,0 +1,27 @@
+<html>
+
+<head>
+	<title>Lista de Productos</title>
+</head>
+
+<body>
+	<h1>Listado de Productos</h1>
+	<table border="1">
+		<thead>
+			<tr>
+				<th>Nombre</th>
+				<th>Precio</th>
+				<th>Categoría</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="producto : ${listaProductos}">
+				<td th:text="${producto.nombre}">Nombre no encontrados</td>
+				<td th:text="${producto.precio}">Precio no encontrado</td>
+				<td th:text="${producto.categoria}">Categoria no encontrado</td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+
+</html>
