@@ -1,27 +1,37 @@
 <html>
 
 <head>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+		integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 	<title>Lista de Productos</title>
 </head>
 
 <body>
-	<h1>Listado de Productos</h1>
-	<table border="1">
-		<thead>
-			<tr>
-				<th>Nombre</th>
-				<th>Precio</th>
-				<th>Categoría</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr th:each="producto : ${listaProductos}">
-				<td th:text="${producto.nombre}">Nombre no encontrados</td>
-				<td th:text="${producto.precio}">Precio no encontrado</td>
-				<td th:text="${producto.categoria}">Categoria no encontrado</td>
-			</tr>
-		</tbody>
-	</table>
+	<div class="container">
+		<h1>Listado de Productos</h1>
+
+		<div th:with="sinProductos=${listaProductos == null || listaProductos.isEmpty()}">
+			<div th:if="${sinProductos}" class="alert alert-warning">Productos no
+				encontrados</div>
+
+			<table th:unless="${sinProductos}" border="1">
+				<thead>
+					<tr>
+						<th>Nombre</th>
+						<th>Precio</th>
+						<th>Categoría</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="producto : ${listaProductos}">
+						<td th:text="${producto.nombre}">Nombre no encontrado</td>
+						<td th:text="${producto.precio}">Precio no encontrado</td>
+						<td th:text="${producto.categoria}">Categoria no encontrado</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
 </body>
 
 </html>

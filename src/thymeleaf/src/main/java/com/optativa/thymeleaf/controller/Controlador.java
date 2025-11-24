@@ -45,4 +45,14 @@ public class Controlador {
 		
 		return "lista";
 	}
+	
+	@GetMapping("/productosVacios")
+	//Prueba para ver como funcionaria si se le pasa una lista vacia
+	public String listadoVacio(Model model) {
+		List<Producto> listaProductos = new ArrayList<>();
+		
+		model.addAttribute("listaProductos", listaProductos);
+		
+		return "lista";
+	}
 }
