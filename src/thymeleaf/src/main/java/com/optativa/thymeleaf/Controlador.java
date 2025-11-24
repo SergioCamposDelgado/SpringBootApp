@@ -3,6 +3,7 @@ package com.optativa.thymeleaf;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -16,9 +17,9 @@ public class Controlador {
     }
 
 	@GetMapping("/saluda")
-	public String saludo(Model modelo) {
+	public String saludo(@RequestParam(required = false, defaultValue = "Test") String name, Model modelo) {
 		System.out.println("#####  Entra en /saluda");
-		String name = "Manuel";
+		//String name = "Manuel";
 		modelo.addAttribute("nombre", name);
 		
 		return "saludo";
