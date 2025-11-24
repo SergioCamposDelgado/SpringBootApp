@@ -1,0 +1,11 @@
+<html>
+<table>
+<tr th:each="producto : ${listaProductos}">
+	
+	<td><span th:text="${producto.nombre}"></span></td>
+	<td><span th:text="${producto.precio}"></span></td>
+	<td><span th:text="${producto.categoria}"></span></td>
+</tr>
+</table>
+</html>
+
