@@ -3,6 +3,7 @@ package com.optativa.thymeleaf.entidad;
 public class Producto {
 		//añadios ID
 		private int id;
+		
 		private String nombre;
 		private double precio;
 		private String categoria;
