@@ -2,18 +2,21 @@ package com.optativa.thymeleaf.entidad;
 
 public class Producto implements Comparable<Producto>{
 
+	private int id;
 	private String nombre;
 	private double precio;
 	private String categoria;
 
-	public Producto(String nombre, double precio, String categoria) {
-
+	public Producto(int id, String nombre, double precio, String categoria) {
+		this.setId(id);
 		this.setNombre(nombre);
 		this.setPrecio(precio);
 		this.setCategoria(categoria);
 	}
 
-
+	public int getId() {
+		return id;
+	}
 	public String getNombre() {
 		return nombre;
 	}
@@ -23,7 +26,9 @@ public class Producto implements Comparable<Producto>{
 	public String getCategoria() {
 		return categoria;
 	}
-
+	public void setId(int id) {
+		this.id = id;
+	}
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}

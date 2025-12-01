@@ -6,26 +6,27 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.optativa.thymeleaf.ThymeleafApplication;
 import com.optativa.thymeleaf.entidad.Producto;
+import com.optativa.thymeleaf.servicio.Servicio;
 
 
 
 @Controller
 public class Controlador {
 
-    private final ThymeleafApplication thymeleafApplication;
+    private Servicio servicio;
 
-    Controlador(ThymeleafApplication thymeleafApplication) {
-        this.thymeleafApplication = thymeleafApplication;
+    Controlador() {
+        this.servicio = new Servicio();
     }
 
 	@GetMapping("/saluda")
 	public String saludo(@RequestParam(required = false, defaultValue = "Anonimo") String name, Model modelo) {
-		System.out.println("#####  Entra en /saluda");
-		//String name = "Manuel";
+
 		modelo.addAttribute("nombre", name);
 		
 		return "saludo";
@@ -33,15 +34,9 @@ public class Controlador {
 	
 	@GetMapping("/productos")
 	public String listado(Model model) {
-		List<Producto> listaProductos = new ArrayList<Producto>();
 		
-		listaProductos.add(new Producto("Portatil", 1000, "Informatica"));
-		listaProductos.add(new Producto("PC", 2000, "Informatica"));
-		listaProductos.add(new Producto("Manzanas verdes", 200, "Comida"));
 		
-		listaProductos.sort(null);
-		
-		model.addAttribute("listaProductos", listaProductos);
+		model.addAttribute("listaProductos", servicio.obtenerProductos());
 		
 		return "lista";
 	}
@@ -54,5 +49,14 @@ public class Controlador {
 		model.addAttribute("listaProductos", listaProductos);
 		
 		return "lista";
+	}
+	
+	@GetMapping("/productos/{id}")
+	public String vistaProducto (@PathVariable int id, Model model) {
+		Producto producto = servicio.obtenerProductoPorId(id);
+		
+		model.addAttribute("producto", producto);
+		
+		return "vistaProducto";
 	}
 }

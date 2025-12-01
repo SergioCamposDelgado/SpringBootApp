@@ -10,30 +10,30 @@
 	<div class="container">
 		<h1>Listado de Productos</h1>
 
-		<div th:with="sinProductos=${listaProductos == null || listaProductos.isEmpty()}">
-			<div th:if="${sinProductos}" class="alert alert-warning">Productos no
-				encontrados</div>
+		<div>
+			<div th:if="${producto == null }" class="alert alert-warning">Producto no
+				encontrado</div>
 
-			<table th:unless="${sinProductos}" border="1">
+			<table th:unless="${producto == null}" border="1">
 				<thead>
 					<tr>
 						<th>ID</th>
 						<th>Nombre</th>
 						<th>Precio</th>
 						<th>Categoría</th>
-						<th>Detalles</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr th:each="producto : ${listaProductos}">
+					<tr>
 						<td th:text="${producto.id}">ID no encontrado</td>
 						<td th:text="${producto.nombre}">Nombre no encontrado</td>
 						<td th:text="${producto.precio}">Precio no encontrado</td>
 						<td th:text="${producto.categoria}">Categoria no encontrado</td>
-						<td><a t th:href="@{/productos/{id}(id=${producto.id})}">Ver detalles</a></td>
 					</tr>
 				</tbody>
 			</table>
+			
+			<a href="/productos">Volver</a>
 		</div>
 	</div>
 </body>
