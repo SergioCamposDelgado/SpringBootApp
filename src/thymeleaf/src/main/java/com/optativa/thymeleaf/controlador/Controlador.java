@@ -41,7 +41,8 @@ public class Controlador {
 	
 	 @GetMapping("/productos/{id}")
 	 public String obtenerProducto(@PathVariable int id, Model model) {
-		 model.addAttribute("producto", servicio.obtenerProductoPorId(id));
+		 Producto p = servicio.obtenerProductoPorId(id);
+		 model.addAttribute("producto", p);
 		 return "vista";
 	 }
 	 @GetMapping("/formulario")
