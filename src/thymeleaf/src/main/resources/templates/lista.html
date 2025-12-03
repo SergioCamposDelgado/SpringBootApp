@@ -15,6 +15,7 @@
 </head>
 
 <body>
+	<div th:replace="fragments/layout :: cabecera"></div>
 <span class="alert alert-warning" th:if="${listaProductos.size() == 0}">
     Esto está vacío
 </span>
@@ -51,6 +52,9 @@
 </div>
 
 <a th:href="@{/formulario}">Agregar Producto</a>
+
+<div th:replace="fragments/layout :: pie"></div>
+
 </body>
 
 </html>
