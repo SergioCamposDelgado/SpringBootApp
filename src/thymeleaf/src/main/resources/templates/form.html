@@ -13,21 +13,24 @@
 		    <div class="form-group">
 		        <label>Nombre</label>
 		        <input th:field="*{nombre}" class="form-control" placeholder="Nombre del producto" />
+				<div class="text-danger small" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
 		    </div>
 
 		    <div class="form-group">
 		        <label>Precio</label>
 		        <input th:field="*{precio}" class="form-control" placeholder="0.00" />
+				<div class="text-danger small" th:if="${#fields.hasErrors('precio')}" th:errors="*{precio}"></div>
 		    </div>
 
 		    <div class="form-group">
 		        <label>Categoría</label>
 		        <input th:field="*{categoria}" class="form-control" />
+				<div class="text-danger small" th:if="${#fields.hasErrors('categoria')}" th:errors="*{categoria}"></div>
 		    </div>
 
 		    <div class="text-right mt-3">
 		        <button type="submit" class="btn btn-success btn-lg pl-4 pr-4">
-		            Agregar
+		            Guardar
 		        </button>
 		    </div>
 

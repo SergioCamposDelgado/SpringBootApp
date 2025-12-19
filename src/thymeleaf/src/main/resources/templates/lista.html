@@ -30,7 +30,11 @@
 						<td th:text="${producto.nombre}">Nombre no encontrado</td>
 						<td th:text="${producto.precio}">Precio no encontrado</td>
 						<td th:text="${producto.categoria}">Categoria no encontrado</td>
-						<td><a t th:href="@{/productos/{id}(id=${producto.id})}">Ver detalles</a></td>
+						<td>
+							<a t th:href="@{/productos/{id}(id=${producto.id})}">Ver detalles</a>
+							<br/>
+							<a t th:href="@{/productos/{id}/editar (id=${producto.id})}">Editar</a>
+						</td>
 					</tr>
 				</tbody>
 			</table>

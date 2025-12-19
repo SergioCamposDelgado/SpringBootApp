@@ -5,14 +5,17 @@ import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.optativa.thymeleaf.ThymeleafApplication;
 import com.optativa.thymeleaf.entidad.Producto;
 import com.optativa.thymeleaf.servicio.Servicio;
+
+import jakarta.validation.Valid;
 
 @Controller
 public class Controlador {
@@ -65,10 +68,25 @@ public class Controlador {
 	}
 
 	@PostMapping("/formulario")
-	public String obtenerFormulario(Producto producto, Model model) {
-		servicio.agregarProducto(producto);
-		model.addAttribute("listaProductos", servicio.obtenerProductos());
+	public String obtenerFormulario(@Valid @ModelAttribute("producto") Producto producto, BindingResult bindingResult,
+			Model model) {
+		if (bindingResult.hasErrors()) {
+			return "form";
+		} else if (servicio.obtenerProductoPorId(producto.getId()) == null) {
+			servicio.agregarProducto(producto);
+			model.addAttribute("listaProductos", servicio.obtenerProductos());
+		} else {
+			servicio.actualizarProducto(producto);
+		}
+		return "redirect:/productos";
+	}
+	
+	@GetMapping("/productos/{id}/editar")
+	public String editarProducto(@PathVariable int id, Model model) {
+		Producto producto = servicio.obtenerProductoPorId(id);
 
-		return "lista";
+		model.addAttribute("producto", producto);
+
+		return "form";
 	}
 }
