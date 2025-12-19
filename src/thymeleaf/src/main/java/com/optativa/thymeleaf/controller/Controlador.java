@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.optativa.thymeleaf.entidad.Producto;
+import com.optativa.thymeleaf.entidad.Temperatura;
 import com.optativa.thymeleaf.servicio.Servicio;
 
 import jakarta.validation.Valid;
@@ -64,16 +65,21 @@ public class Controlador {
 	@GetMapping("/formulario")
 	public String mostrarForm(Model model) {
 		model.addAttribute("producto", new Producto());
-		model.addAttribute("titulo", "Agregar un producto");
+		model.addAttribute("titulo", "Agregar un Producto");
 		return "form";
 	}
 
 	@PostMapping("/formulario")
 	public String obtenerFormulario(@Valid @ModelAttribute("producto") Producto producto, BindingResult bindingResult,
 			Model model) {
+		
+		boolean productoExiste = (servicio.obtenerProductoPorId(producto.getId()) == null);
+		String titulo = (productoExiste) ? "Agregar un Producto" : "Editar Producto";
+	    model.addAttribute("titulo", titulo);
+	    
 		if (bindingResult.hasErrors()) {
 			return "form";
-		} else if (servicio.obtenerProductoPorId(producto.getId()) == null) {
+		} else if (productoExiste) {
 			servicio.agregarProducto(producto);
 			model.addAttribute("listaProductos", servicio.obtenerProductos());
 		} else {
@@ -114,5 +120,41 @@ public class Controlador {
 	    model.addAttribute("query", query); // Para mostrarlo en la vista
 	    
 	    return "lista"; // Reutiliza la misma vista lista.html
+	}
+	
+	// Mostrar el formulario inicialmente
+	@GetMapping("/conversor")
+	public String mostrarConversor(Model model) {
+	    model.addAttribute("titulo", "Conversor de Temperaturas");
+	    return "temperaturas";
+	}
+
+	// Procesar la conversión
+	@PostMapping("/conversor")
+	public String conversorTemperaturas(
+	        @RequestParam String tipo,
+	        @RequestParam double grados,
+	        Model model) {
+
+	    model.addAttribute("titulo", "Conversor de Temperaturas");
+
+	    try {
+	        Temperatura t = new Temperatura();
+
+	        if ("C".equals(tipo)) {
+	            t.setGradosC(grados);  // Lanza excepción si < -273.15
+	        } else if ("F".equals(tipo)) {
+	            t.setGradosF(grados);
+	        } else {
+	            throw new IllegalArgumentException("Tipo de conversión no válido. Usa 'C' o 'F'.");
+	        }
+
+	        model.addAttribute("temp", t);
+
+	    } catch (IllegalArgumentException e) {
+	        model.addAttribute("error", e.getMessage());
+	    }
+
+	    return "temperaturas";  // Volvemos a la misma vista
 	}
 }
