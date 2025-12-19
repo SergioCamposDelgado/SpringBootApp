@@ -3,8 +3,13 @@
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 	<title>Agregar Producto</title>
 </head>	
-<body>
+<body>	
+	<!--Cabecera-->
+	<div th:replace="fragments/layout :: cabecera"></div>
+	
 	<div class="container">
+
+		
 		<h1 class="h1">Agregar un producto</h1>
 		<form th:object="${producto}" action="/formulario" method="post" class="p-4 bg-light rounded shadow">
 
@@ -35,7 +40,8 @@
 		    </div>
 
 		</form>
-		<a href="/">Inicio</a>
 	</div>
+	<!--Pie-->
+	<div th:replace="fragments/layout :: pie"></div>
 </body>
 </html>

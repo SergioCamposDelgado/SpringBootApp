@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Este head es solo para que el fragmento sea válido, no se usará directamente -->
+</head>
+<body>
+
+    <!-- Fragmento de cabecera -->
+    <header th:fragment="cabecera" class="bg-primary text-white p-4 mb-4">
+        <div class="container">
+            <h1 class="display-4">Mi Tienda de Productos</h1>
+            <nav>
+                <a th:href="@{/}" class="text-white mr-4">Inicio</a>
+                <a th:href="@{/productos}" class="text-white mr-4">Lista de Productos</a>
+                <a th:href="@{/formulario}" class="text-white">Agregar Producto</a>
+            </nav>
+        </div>
+    </header>
+
+	<!-- Fragmento de footer -->
+    <footer th:fragment="pie" class="bg-dark text-white text-center p-3 mt-5">
+		<div class="container text-center">
+		    <p class="mb-0">&copy; 2025 Mi Tienda de Productos - Desarrollado con Spring Boot y Thymeleaf</p>
+		</div>
+    </footer>
+
+</body>
+</html>

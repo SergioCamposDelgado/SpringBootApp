@@ -7,7 +7,12 @@
 </head>
 
 <body>
+	<!--Cabecera-->
+	<div th:replace="fragments/layout :: cabecera"></div>
+	
 	<div class="container">
+
+		
 		<h1>Listado de Productos</h1>
 
 		<div th:with="sinProductos=${listaProductos == null || listaProductos.isEmpty()}">
@@ -39,9 +44,10 @@
 				</tbody>
 			</table>
 		</div>
-		<a th:href="@{/formulario}">Agregar Producto</a><br/>
-		<a href="/">Inicio</a>
 	</div>
+
+	<!--Pie-->
+	<div th:replace="fragments/layout :: pie"></div>
 </body>
 
 </html>
