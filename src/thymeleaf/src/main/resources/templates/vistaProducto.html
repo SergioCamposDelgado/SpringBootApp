@@ -7,8 +7,11 @@
 </head>
 
 <body>
+	<!--Cabecera-->
+	<div th:replace="fragments/layout :: cabecera"></div>
+	
 	<div class="container">
-		<h1>Listado de Productos</h1>
+		<h1>Vista de Producto</h1>
 
 		<div>
 			<div th:if="${producto == null }" class="alert alert-warning">Producto no
@@ -33,9 +36,10 @@
 				</tbody>
 			</table>
 			
-			<a href="/productos">Volver</a>
 		</div>
 	</div>
+	<!--Pie-->
+	<div th:replace="fragments/layout :: pie"></div>
 </body>
 
 </html>

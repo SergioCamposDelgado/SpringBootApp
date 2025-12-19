@@ -64,6 +64,7 @@ public class Controlador {
 	@GetMapping("/formulario")
 	public String mostrarForm(Model model) {
 		model.addAttribute("producto", new Producto());
+		model.addAttribute("titulo", "Agregar un producto");
 		return "form";
 	}
 
@@ -86,7 +87,32 @@ public class Controlador {
 		Producto producto = servicio.obtenerProductoPorId(id);
 
 		model.addAttribute("producto", producto);
+		model.addAttribute("titulo", "Editar " +producto.getNombre());
 
 		return "form";
+	}
+	
+	@GetMapping("/productos/buscar")
+	public String buscarProductos(@RequestParam(required = false) String query, 
+	                              Model model) {
+	    
+	    List<Producto> resultados;
+	    
+	    if (query == null || query.trim().isEmpty()) {
+	        // Si no hay query, muestra todos los productos
+	        resultados = servicio.obtenerProductos();
+	    } else {
+	        // Filtra los productos cuyo nombre contiene el texto (ignorando mayúsculas/minúsculas)
+	        String queryLower = query.toLowerCase().trim();
+	        resultados = servicio.obtenerProductos().stream()
+	                .filter(p -> p.getNombre().toLowerCase().contains(queryLower))
+	                .toList();
+	    }
+	    
+	    // Añade los resultados y el término de búsqueda al modelo
+	    model.addAttribute("listaProductos", resultados);
+	    model.addAttribute("query", query); // Para mostrarlo en la vista
+	    
+	    return "lista"; // Reutiliza la misma vista lista.html
 	}
 }

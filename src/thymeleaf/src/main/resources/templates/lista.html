@@ -16,12 +16,28 @@
 		<h1>Listado de Productos</h1>
 
 		<div th:with="sinProductos=${listaProductos == null || listaProductos.isEmpty()}">
-			<div th:if="${sinProductos}" class="alert alert-warning">Productos no
-				encontrados</div>
+			
+				
+				
+				<!-- Formulario de búsqueda con método GET -->
+				<div class="container my-4">
+				    <form action="/productos/buscar" th:method="get" class="form-inline mb-4">
+				        <div class="form-group mr-2">
+				            <input type="text" name="query" class="form-control" placeholder="Buscar por nombre..." />
+				        </div>
+				        <button type="submit" class="btn btn-primary">Buscar</button>
+				    </form>
+				</div>
+				
+				<div th:if="${query != null && !query.isEmpty()}" class="alert alert-info">
+				    Resultados para: <strong th:text="${query}"></strong>
+				    <a th:href="@{/productos}" class="float-right">✖ Limpiar búsqueda</a>
+				</div>
+				
 
-			<table th:unless="${sinProductos}" border="1">
+			<table th:unless="${sinProductos}" class="table table-striped">
 				<thead>
-					<tr>
+					<tr class="table-info">
 						<th>ID</th>
 						<th>Nombre</th>
 						<th>Precio</th>
@@ -43,6 +59,8 @@
 					</tr>
 				</tbody>
 			</table>
+			
+			<div th:if="${sinProductos}" class="alert alert-warning">No se han encontrado productos</div>
 		</div>
 	</div>
 
