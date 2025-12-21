@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Resumen de Envío</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
+    <style>
+        body { padding: 40px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="mb-4">Resumen del Envío</h1>
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h4>Datos del envío</h4>
+        </div>
+        <div class="card-body">
+            <p><strong>Peso:</strong> <span th:text="${envio.peso} + ' kg'"></span></p>
+            <p><strong>Destino:</strong>
+                <span th:switch="${envio.destino}">
+                    <span th:case="'nacional'">Nacional</span>
+                    <span th:case="'europa'">Europa</span>
+                    <span th:case="'internacional'">Internacional</span>
+                    <span th:case="*">Desconocido</span>
+                </span>
+            </p>
+            <p><strong>Urgente:</strong>
+                <span th:text="${envio.urgente} ? 'Sí (+50% recargo)' : 'No'"></span>
+            </p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header bg-success text-white">
+            <h4>Desglose del coste</h4>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <tr>
+                    <td>Tarifa base</td>
+                    <td class="text-right" th:text="'€ ' + ${#numbers.formatDecimal(tarifaBase, 1, 2)}"></td>
+                </tr>
+                <tr>
+                    <td>Recargo por peso extra</td>
+                    <td class="text-right" th:text="'€ ' + ${#numbers.formatDecimal(recargoPeso, 1, 2)}"></td>
+                </tr>
+                <tr th:if="${envio.urgente}">
+                    <td>Recargo por urgencia (+50%)</td>
+                    <td class="text-right" th:text="'€ ' + ${#numbers.formatDecimal(recargoUrgente, 1, 2)}"></td>
+                </tr>
+                <tr class="table-success font-weight-bold">
+                    <td>COSTE TOTAL</td>
+                    <td class="text-right h4" th:text="'€ ' + ${#numbers.formatDecimal(costeTotal, 1, 2)}"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <a th:href="@{/envio}" class="btn btn-primary mt-4">Nuevo cálculo</a>
+    <a th:href="@{/}" class="btn btn-secondary mt-4 ml-2">Volver al inicio</a>
+</div>
+</body>
+</html>

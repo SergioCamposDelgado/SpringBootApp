@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.optativa.thymeleaf.entidad.EnvioForm;
 import com.optativa.thymeleaf.entidad.Producto;
 import com.optativa.thymeleaf.entidad.Temperatura;
 import com.optativa.thymeleaf.servicio.Servicio;
@@ -156,5 +157,46 @@ public class Controlador {
 	    }
 
 	    return "temperaturas";  // Volvemos a la misma vista
+	}
+	
+	// Mostrar el formulario (GET)
+	@GetMapping("/envio")
+	public String mostrarFormularioEnvio(Model model) {
+	    if (!model.containsAttribute("envio")) {
+	        model.addAttribute("envio", new EnvioForm());
+	    }
+	    return "envioFormulario";
+	}
+
+	// Procesar el cálculo (POST)
+	@PostMapping("/envio/calcular")
+	public String calcularEnvio(@Valid @ModelAttribute("envio") EnvioForm envio,
+	                            BindingResult bindingResult,
+	                            Model model) {
+
+	    if (bindingResult.hasErrors()) {
+	        // Ya tenemos el objeto "envio" gracias a @ModelAttribute
+	        // No necesitamos añadirlo manualmente
+	        return "envioFormulario";  // Vuelve al formulario con errores
+	    }
+
+	    // === Cálculo ===
+	    double tarifaBase = switch (envio.getDestino()) {
+	        case "nacional" -> 5.0;
+	        case "europa" -> 15.0;
+	        case "internacional" -> 30.0;
+	        default -> throw new IllegalArgumentException("Destino inválido");
+	    };
+
+	    double recargoPeso = Math.max(0, envio.getPeso() - 1) * 2.0;
+	    double recargoUrgente = envio.isUrgente() ? (tarifaBase + recargoPeso) * 0.5 : 0;
+	    double costeTotal = tarifaBase + recargoPeso + recargoUrgente;
+
+	    model.addAttribute("tarifaBase", tarifaBase);
+	    model.addAttribute("recargoPeso", recargoPeso);
+	    model.addAttribute("recargoUrgente", recargoUrgente);
+	    model.addAttribute("costeTotal", costeTotal);
+
+	    return "envioResumen";
 	}
 }
