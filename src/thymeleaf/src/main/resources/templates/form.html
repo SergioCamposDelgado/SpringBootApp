@@ -4,8 +4,9 @@
 	<title th:text="${titulo}">Título por defecto</title>
 </head>	
 <body>	
-	<!--Cabecera-->
-	<div th:replace="fragments/layout :: cabecera"></div>
+	
+<!--Cabecera-->
+<div th:replace="~{fragments/layout :: cabecera}"></div>
 	
 	<div class="container">
 
@@ -42,7 +43,8 @@
 
 		</form>
 	</div>
-	<!--Pie-->
-	<div th:replace="fragments/layout :: pie"></div>
+<!--Pie-->
+<div th:replace="~{fragments/layout :: pie}"></div>
+	
 </body>
 </html>

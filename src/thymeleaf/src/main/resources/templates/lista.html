@@ -1,71 +1,82 @@
+<!DOCTYPE html>
 <html>
-
 <head>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
-		integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-	<title>Lista de Productos</title>
+    <link rel="stylesheet" 
+          href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" 
+          crossorigin="anonymous">
+    <title>Lista de Productos</title>
 </head>
-
 <body>
-	<!--Cabecera-->
-	<div th:replace="fragments/layout :: cabecera"></div>
-	
-	<div class="container">
 
-		
-		<h1>Listado de Productos</h1>
+<!-- Cabecera -->
+<div th:replace="~{fragments/layout :: cabecera}"></div>
 
-		<div th:with="sinProductos=${listaProductos == null || listaProductos.isEmpty()}">
-			
-				
-				
-				<!-- Formulario de búsqueda con método GET -->
-				<div class="container my-4">
-				    <form action="/productos/buscar" th:method="get" class="form-inline mb-4">
-				        <div class="form-group mr-2">
-				            <input type="text" name="query" class="form-control" placeholder="Buscar por nombre..." />
-				        </div>
-				        <button type="submit" class="btn btn-primary">Buscar</button>
-				    </form>
-				</div>
-				
-				<div th:if="${query != null && !query.isEmpty()}" class="alert alert-info">
-				    Resultados para: <strong th:text="${query}"></strong>
-				    <a th:href="@{/productos}" class="float-right">✖ Limpiar búsqueda</a>
-				</div>
-				
+<div class="container">
+    <h1>Listado de Productos</h1>
 
-			<table th:unless="${sinProductos}" class="table table-striped">
-				<thead>
-					<tr class="table-info">
-						<th>ID</th>
-						<th>Nombre</th>
-						<th>Precio</th>
-						<th>Categoría</th>
-						<th>Detalles</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr th:each="producto : ${listaProductos}">
-						<td th:text="${producto.id}">ID no encontrado</td>
-						<td th:text="${producto.nombre}">Nombre no encontrado</td>
-						<td th:text="${producto.precio}">Precio no encontrado</td>
-						<td th:text="${producto.categoria}">Categoria no encontrado</td>
-						<td>
-							<a t th:href="@{/productos/{id}(id=${producto.id})}">Ver detalles</a>
-							<br/>
-							<a t th:href="@{/productos/{id}/editar (id=${producto.id})}">Editar</a>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			
-			<div th:if="${sinProductos}" class="alert alert-warning">No se han encontrado productos</div>
-		</div>
-	</div>
+    <div th:with="sinProductos=${listaProductos == null || listaProductos.isEmpty()}">
 
-	<!--Pie-->
-	<div th:replace="fragments/layout :: pie"></div>
+        <!-- Formulario de búsqueda con método GET -->
+        <div class="container my-4">
+            <form action="/productos/buscar" th:method="get" class="form-inline mb-4">
+                <div class="form-group mr-2">
+                    <input type="text" name="query" class="form-control" placeholder="Buscar por nombre..." />
+                </div>
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </form>
+        </div>
+
+        <!-- Mensaje de búsqueda activa -->
+        <div th:if="${query != null && !query.isEmpty()}" class="alert alert-info">
+            Resultados para: <strong th:text="${query}"></strong>
+            <a th:href="@{/productos}" class="float-right">✖ Limpiar búsqueda</a>
+        </div>
+
+        <!-- Tabla de productos -->
+        <table th:unless="${sinProductos}" class="table table-striped">
+            <thead>
+                <tr class="table-info">
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Categoría</th>
+                    <th>Detalles</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Cada fila con estilo condicional según el precio -->
+                <tr th:each="producto : ${listaProductos}"
+                    th:classappend="${producto.precio > 100} ? 'table-danger' : 'table-success'">
+
+                    <td th:text="${producto.id}">ID no encontrado</td>
+					<td th:text="${producto.nombre}"></td>
+					<td>
+						<span th:text="${producto.precio} + €">Precio no encontrado</span>
+						<span th:if="${producto.precio > 100}"
+					      	class="text-danger font-weight-bold mr-2">
+					    	💰
+						</span>
+					</td>					
+                    <td th:text="${producto.categoria}">Categoría no encontrada</td>
+                    <td>
+                        <a th:href="@{/productos/{id}(id=${producto.id})}">Ver detalles</a>
+                        <br/>
+                        <a th:href="@{/productos/{id}/editar(id=${producto.id})}">Editar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Mensaje cuando no hay productos -->
+        <div th:if="${sinProductos}" class="alert alert-warning">
+            No se han encontrado productos
+        </div>
+    </div>
+</div>
+
+<!-- Pie de página -->
+<div th:replace="~{fragments/layout :: pie}"></div>
+
 </body>
-
 </html>
