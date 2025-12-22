@@ -1,5 +1,7 @@
 package com.optativa.thymeleaf.entidad;
 
+import java.time.LocalDate;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 
@@ -15,9 +17,11 @@ public class Producto implements Comparable<Producto> {
 	
 	@NotBlank (message = "No puede tener la categoria vacia")
 	private String categoria;
+	
+	private LocalDate fechaAlta;
 
 	public Producto() {
-
+		this.fechaAlta = LocalDate.now();
 	}
 
 	public Producto(int id, String nombre, double precio, String categoria) {
@@ -25,6 +29,7 @@ public class Producto implements Comparable<Producto> {
 		this.setNombre(nombre);
 		this.setPrecio(precio);
 		this.setCategoria(categoria);
+		this.fechaAlta = LocalDate.now();
 	}
 
 	public int getId() {
@@ -41,6 +46,10 @@ public class Producto implements Comparable<Producto> {
 
 	public String getCategoria() {
 		return categoria;
+	}
+	
+	public LocalDate getFechaAlta() {
+		return fechaAlta;
 	}
 
 	public void setId(int id) {
@@ -66,6 +75,6 @@ public class Producto implements Comparable<Producto> {
 
 	@Override
 	public int compareTo(Producto o) {
-		return this.getNombre().toLowerCase().compareTo(o.getNombre().toLowerCase());
+		return this.getNombre().compareToIgnoreCase(o.getNombre());
 	}
 }

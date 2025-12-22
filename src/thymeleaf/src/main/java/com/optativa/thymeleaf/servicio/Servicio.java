@@ -1,7 +1,6 @@
 package com.optativa.thymeleaf.servicio;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.optativa.thymeleaf.entidad.Producto;

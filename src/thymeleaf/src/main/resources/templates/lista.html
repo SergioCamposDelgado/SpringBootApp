@@ -41,6 +41,7 @@
                     <th>Nombre</th>
                     <th>Precio</th>
                     <th>Categoría</th>
+					<th>Fecha Alta</th>
                     <th>Detalles</th>
                 </tr>
             </thead>
@@ -52,13 +53,14 @@
                     <td th:text="${producto.id}">ID no encontrado</td>
 					<td th:text="${producto.nombre}"></td>
 					<td>
-						<span th:text="${producto.precio} + €">Precio no encontrado</span>
+						<span th:text="${#numbers.formatDecimal(producto.precio, 1, 2)} + '€'">Precio no encontrado</span>
 						<span th:if="${producto.precio > 100}"
 					      	class="text-danger font-weight-bold mr-2">
 					    	💰
 						</span>
 					</td>					
                     <td th:text="${producto.categoria}">Categoría no encontrada</td>
+					<td th:text="${#temporals.format(producto.fechaAlta, 'dd/MM/yyyy')}">Fecha no encontrada</td>
                     <td>
                         <a th:href="@{/productos/{id}(id=${producto.id})}">Ver detalles</a>
                         <br/>
