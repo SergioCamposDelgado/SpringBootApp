@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.optativa.thymeleaf.entidad.EnvioForm;
+import com.optativa.thymeleaf.entidad.LineaPedido;
+import com.optativa.thymeleaf.entidad.PedidoForm;
 import com.optativa.thymeleaf.entidad.Producto;
 import com.optativa.thymeleaf.entidad.Temperatura;
 import com.optativa.thymeleaf.servicio.Servicio;
@@ -198,5 +200,28 @@ public class Controlador {
 	    model.addAttribute("costeTotal", costeTotal);
 
 	    return "envioResumen";
+	}
+	
+	@GetMapping("/pedido")
+	public String mostrarFormularioPedido(Model model) {
+	    PedidoForm pedido = new PedidoForm();
+	    pedido.getLineas().add(new LineaPedido()); // 1 línea inicial
+	    model.addAttribute("pedido", pedido);
+	    model.addAttribute("todosProductos", servicio.obtenerProductos());
+	    return "pedidoForm";
+	}
+	
+	@PostMapping("/pedido/procesar")
+	public String procesarPedido(@Valid @ModelAttribute("pedido") PedidoForm pedido,
+	                             BindingResult bindingResult,
+	                             Model model) {
+
+	    if (bindingResult.hasErrors()) {
+	        model.addAttribute("todosProductos", servicio.obtenerProductos());
+	        return "pedidoForm";
+	    }
+
+	    model.addAttribute("pedido", pedido);
+	    return "pedidoResumen";
 	}
 }

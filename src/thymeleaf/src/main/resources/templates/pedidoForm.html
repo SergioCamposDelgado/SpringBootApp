@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Nuevo Pedido</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+
+<!-- Cabecera -->
+<div th:replace="~{fragments/layout :: cabecera}"></div>
+
+<div class="container mt-5">
+    <h1 class="mb-4">Nuevo Pedido</h1>
+
+    <form id="pedidoForm" th:object="${pedido}" th:action="@{/pedido/procesar}" method="post" class="bg-light p-4 rounded shadow">
+
+        <table class="table table-bordered mb-4" id="lineasTable">
+            <thead class="thead-light">
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unitario</th>
+                    <th>Subtotal</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="linea, iter : *{lineas}" class="linea-pedido">
+                    <td>
+                        <select th:field="*{lineas[__${iter.index}__].producto}"
+                                class="form-control producto-select">
+                            <option value="">Selecciona un producto</option>
+                            <option th:each="prod : ${todosProductos}"
+                                    th:value="${prod.id}"
+                                    th:text="${prod.nombre} + ' (' + ${#numbers.formatDecimal(prod.precio, 1, 2)} + ' €)'">
+                                Producto
+                            </option>
+                        </select>
+                        <div class="text-danger small mt-1"
+                             th:if="${#fields.hasErrors('lineas[__${iter.index}__].producto')}"
+                             th:errors="*{lineas[__${iter.index}__].producto}"></div>
+                    </td>
+                    <td>
+                        <input type="number" min="1" step="1"
+                               th:field="*{lineas[__${iter.index}__].cantidad}"
+                               class="form-control cantidad-input" 
+							   placeholder="Introduce cantidad"/>
+                        <div class="text-danger small mt-1"
+                             th:if="${#fields.hasErrors('lineas[__${iter.index}__].cantidad')}"
+                             th:errors="*{lineas[__${iter.index}__].cantidad}"></div>
+                    </td>
+                    <td>
+                        <span class="precio-unitario">—</span>
+                    </td>
+                    <td>
+                        <span class="subtotal">—</span>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm eliminar-linea" style="display:none;">
+                            Eliminar
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="mb-3">
+            <button type="button" id="btnAgregarLinea" class="btn btn-info">
+                <i class="bi bi-plus-circle"></i> Añadir Línea
+            </button>
+        </div>
+
+        <div class="text-danger mb-3" th:if="${#fields.hasErrors('lineas')}" th:errors="*{lineas}"></div>
+
+        <button type="submit" class="btn btn-success btn-lg">Procesar Pedido</button>
+    </form>
+
+    <a th:href="@{/productos}" class="btn btn-secondary mt-4">Volver a Productos</a>
+</div>
+
+<!-- Pie -->
+<div th:replace="~{fragments/layout :: pie}"></div>
+
+<!-- JavaScript para añadir/eliminar líneas -->
+<script>
+    const tableBody = document.querySelector('#lineasTable tbody');
+    const agregarBtn = document.getElementById('btnAgregarLinea');
+
+    // Crear una plantilla limpia (sin valores heredados)
+    const crearFilaNueva = () => {
+        const fila = tableBody.querySelector('tr').cloneNode(true);
+        
+        // Limpieza completa y forzada
+        fila.querySelectorAll('input, select').forEach(el => {
+            if (el.tagName === 'SELECT') {
+                el.selectedIndex = 0;
+            } else if (el.type === 'number') {
+                el.value = '';           // Forzamos vacío
+                el.defaultValue = '';    // También el default
+                el.removeAttribute('value'); // Quitamos cualquier value residual
+            } else {
+                el.value = '';
+            }
+            // Limpieza de clases de validación
+            el.classList.remove('is-valid', 'is-invalid');
+        });
+
+        // Limpiar también los spans de precio/subtotal
+        fila.querySelector('.precio-unitario').textContent = '—';
+        fila.querySelector('.subtotal').textContent = '—';
+
+        return fila;
+    };
+
+    // Actualizar todos los índices (name e id)
+    function actualizarIndices() {
+        const filas = tableBody.querySelectorAll('tr');
+        filas.forEach((fila, index) => {
+            fila.querySelectorAll('input, select').forEach(input => {
+                let name = input.name;
+                if (name) {
+                    // Reemplaza cualquier [número] anterior
+                    name = name.replace(/\[\d+\]/, `[${index}]`);
+                    input.name = name;
+                    input.id = name.replace(/[\[\].]/g, '_');
+                }
+            });
+
+            // Controlar visibilidad del botón eliminar
+            const btnEliminar = fila.querySelector('.eliminar-linea');
+            btnEliminar.style.display = (filas.length > 1) ? 'inline-block' : 'none';
+        });
+    }
+
+    // Añadir nueva línea
+    agregarBtn.addEventListener('click', () => {
+        const nuevaFila = crearFilaNueva();
+        tableBody.appendChild(nuevaFila);
+        actualizarIndices();
+        // Enfocar el select de la nueva fila
+        nuevaFila.querySelector('select').focus();
+    });
+
+    // Eliminar línea
+    tableBody.addEventListener('click', (e) => {
+        if (e.target.classList.contains('eliminar-linea')) {
+            const filas = tableBody.querySelectorAll('tr');
+            if (filas.length > 1) {
+                e.target.closest('tr').remove();
+                actualizarIndices();
+            } else {
+                alert('Debe haber al menos una línea de pedido');
+            }
+        }
+    });
+
+    // Actualización en vivo de subtotal y precio (opcional)
+    tableBody.addEventListener('change', (e) => {
+        const fila = e.target.closest('tr');
+        if (!fila) return;
+
+        if (e.target.classList.contains('producto-select')) {
+            const precioSpan = fila.querySelector('.precio-unitario');
+            const selected = e.target.options[e.target.selectedIndex];
+            if (selected.value) {
+                const precioMatch = selected.text.match(/\(([^)]+)\)/);
+                const precio = precioMatch ? parseFloat(precioMatch[1].replace('€', '').trim()) : 0;
+                precioSpan.textContent = `€ ${precio.toFixed(2)}`;
+                actualizarSubtotal(fila);
+            } else {
+                precioSpan.textContent = '—';
+                fila.querySelector('.subtotal').textContent = '—';
+            }
+        } else if (e.target.classList.contains('cantidad-input')) {
+            actualizarSubtotal(fila);
+        }
+    });
+
+    function actualizarSubtotal(fila) {
+        const cantidad = parseInt(fila.querySelector('.cantidad-input').value) || 0;
+        const precioText = fila.querySelector('.precio-unitario').textContent.replace('€ ', '').trim();
+        const precio = parseFloat(precioText) || 0;
+        const subtotal = cantidad * precio;
+        fila.querySelector('.subtotal').textContent = 
+            (subtotal > 0) ? `€ ${subtotal.toFixed(2)}` : '—';
+    }
+
+    // Inicialización al cargar
+    window.addEventListener('load', () => {
+        // Forzar limpieza inicial de todas las filas existentes
+        document.querySelectorAll('.cantidad-input').forEach(input => {
+            input.value = '';
+            input.defaultValue = '';
+        });
+        actualizarIndices();
+    });
+</script>
+
+</body>
+</html>

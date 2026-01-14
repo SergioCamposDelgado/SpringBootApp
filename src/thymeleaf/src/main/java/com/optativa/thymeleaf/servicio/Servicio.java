@@ -3,8 +3,11 @@ package com.optativa.thymeleaf.servicio;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.optativa.thymeleaf.entidad.Producto;
 
+@Service
 public class Servicio {
 
 	private final List<Producto> listaProductos = new ArrayList<>();
