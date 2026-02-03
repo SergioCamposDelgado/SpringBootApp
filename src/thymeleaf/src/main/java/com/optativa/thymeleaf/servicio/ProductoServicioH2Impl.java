@@ -14,7 +14,6 @@ public class ProductoServicioH2Impl implements ProductoServicio {
 
 	private ProductoRepositorio repositorio;
 	
-	
 	public ProductoServicioH2Impl(ProductoRepositorio repositorio) {
 		this.repositorio =repositorio;
 	}
@@ -26,14 +25,12 @@ public class ProductoServicioH2Impl implements ProductoServicio {
 
 	@Override
 	public Producto obtenerProductoPorId(int id) {
-
 		return repositorio.getReferenceById(id);
 	}
 
 	@Override
 	public void agregarProducto(Producto producto) {
 		repositorio.save(producto);
-		
 	}
 
 	@Override
@@ -41,7 +38,6 @@ public class ProductoServicioH2Impl implements ProductoServicio {
 		if(repositorio.existsById(producto.getId())) {
 			repositorio.save(producto);
 		}
-		
 	}
 
 	@Override
