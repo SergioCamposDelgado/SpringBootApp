@@ -40,6 +40,13 @@ public class Controlador {
        LISTADO Y DETALLE
        ========================== */
 
+    @GetMapping("/productos")
+    public String listado(Model model) {
+        List<Producto> productos = productoServicio.obtenerProductos();
+        model.addAttribute("listaProductos", productos);
+        return "lista";
+    }
+
     @GetMapping("/productos/{id}")
     public String obtenerProducto(@PathVariable int id, Model model) {
         Producto p = productoServicio.obtenerProductoPorId(id);

@@ -14,8 +14,7 @@
 </head>
 
 <body>
-	<header th:replace="~{fragments/layout :: cabecera}"></header>
-	
+	<div th:replace="fragments/layout :: cabecera"></div>
 	<table>
 		<tr>
 			<td><span th:text="${producto.nombre}"></span></td>
@@ -27,6 +26,6 @@
 		</tr>
 	</table>
 </body>
-<footer th:replace="~{fragments/layout :: pie}"></footer>
+<div th:replace="fragments/layout :: pie"></div>
 
 </html>

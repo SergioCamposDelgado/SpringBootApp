@@ -1,58 +1,55 @@
 package com.optativa.thymeleaf.servicio;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.context.annotation.Primary;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.optativa.thymeleaf.entidad.Producto;
-import com.optativa.thymeleaf.repositorio.ProductoRepositorio;
+/**
+ * FAKE SERVICIO
+ */
+@Service
+public class ProductoServicioImpl implements ProductoServicio{
 
-@Service /* @Primary */
-public class ProductoServicioImpl  implements ProductoServicio{
-	
-	private ProductoRepositorio repositorio;
-	
-	public ProductoServicioImpl(  ProductoRepositorio repositorio) {
-		this.repositorio = repositorio;
-	}
+    private final List<Producto> listaProductos = new ArrayList<>();
+    private int cont_id = 1;
 
-	@Override
-	public List<Producto> obtenerProductos() {
-		return repositorio.findAll();
-	}
+    public ProductoServicioImpl() {
+        agregarProducto(new Producto("Pan", 1.10, "Alimentación"));
+        agregarProducto(new Producto( "Leche", 0.95, "Alimentación"));
+        agregarProducto(new Producto(  "Café Molido", 3.80, "Alimentación"));
+        agregarProducto(new Producto( "Auriculares", 29.95, "Electrónica"));
+    }
+    
 
-	@Override
-	public Producto obtenerProductoPorId(int id) {
-		
-		return repositorio.getReferenceById(id);
-	}
+    public void agregarProducto(Producto p) {
+        p.setId(cont_id++);
+        listaProductos.add(p);
+    }
 
-	@Override
-	public void agregarProducto(Producto producto) {
-		repositorio.save(producto);
-		
-	}
+    public List<Producto> obtenerProductos() {
+        return listaProductos;
+    }
+
+    public Producto obtenerProductoPorId(int id) {
+        return listaProductos
+                .stream()
+                .filter(p -> p.getId() == id)
+                .findFirst()
+                .orElse(null);
+    }
+
 
 	@Override
 	public void actualizarProducto(Producto producto) {
-		if(repositorio.existsById(producto.getId())) {
-			repositorio.save(producto);
-		}
-		
+	    eliminarProducto(producto.getId());
+	    listaProductos.add(producto);
 	}
+
 
 	@Override
 	public void eliminarProducto(int id) {
-		repositorio.deleteById(id);;
-		
+		listaProductos.removeIf(p -> p.getId() == id);
 	}
-
-	@Override
-	public Page<Producto> obtenerProductoPorPagina(Pageable pageable) {
-		return repositorio.findAll(pageable);
-	}
-
 }
