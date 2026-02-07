@@ -15,14 +15,18 @@
 </head>
 
 <body>
-	<div th:replace="fragments/layout :: cabecera"></div>
-<span class="alert alert-warning" th:if="${listaProductos.size() == 0}">
-    Esto está vacío
-</span>
+	<header th:replace="~{fragments/layout :: cabecera}"></header>
 
-<div th:unless="${listaProductos.isEmpty()}">
+	<div  class="container">
+
+		<div th:replace="~{fragments/usuario :: usuario}"></div>
+		<div class="alert alert-warning text-center mx-auto my-3" 
+		     th:if="${productos?.isEmpty()}">
+		    La lista está vacía
+		</div>
+<div th:unless="${productos?.isEmpty()}">
     <table class="table">
-        <tr th:each="producto : ${listaProductos}">
+        <tr th:each="producto : ${productos.content}">
             <td><span th:text="${producto.nombre}"></span></td>
             <td><span th:text="${producto.precio}"></span></td>
             <td><span th:text="${producto.categoria}"></span></td>
@@ -51,9 +55,12 @@
     </table>
 </div>
 
-<a th:href="@{/formulario}">Agregar Producto</a>
-
-<div th:replace="fragments/layout :: pie"></div>
+<a th:href="@{/formulario}" 
+   class="btn btn-primary d-block mx-auto my-3 text-center" 
+   style="max-width: 300px;">
+    Agregar Producto
+</a></div>
+<footer th:replace="~{fragments/layout :: pie}"></footer>
 
 </body>
 

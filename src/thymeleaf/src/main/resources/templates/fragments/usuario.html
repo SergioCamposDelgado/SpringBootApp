@@ -1,0 +1,8 @@
+<!-- fragments/usuario.html -->
+<div th:fragment="usuario">
+  <h1 class="h5 mb-0">
+    Bienvenido
+    <span th:if="${usuario != null}" th:text="${usuario.nombre}"></span>
+    <span th:unless="${usuario != null}">invitado</span>
+  </h1>
+</div>
