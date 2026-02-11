@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Error del Sistema</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container vh-100 d-flex flex-column justify-content-center align-items-center">
+        
+        <h1 class="display-1 fw-bold text-primary">
+            <i class="bi bi-exclamation-triangle"></i> Oops!
+        </h1>
+        
+        <p class="fs-3"> <span class="text-danger">Lo sentimos,</span> algo salió mal.</p>
+        
+        <p class="lead text-center">
+            Se ha producido un error inesperado. Nuestro equipo técnico ha sido notificado.
+        </p>
+
+        <div th:if="${error}" class="alert alert-secondary small mt-2">
+            <strong>Detalle técnico:</strong> <span th:text="${message}">Error desconocido</span>
+        </div>
+        
+        <a th:href="@{/}" class="btn btn-primary mt-3">Volver al Inicio</a>
+        
+    </div>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</body>
+</html>

@@ -1,7 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" 
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      th:replace="~{layout/main :: layout(~{::section})}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+    th:replace="~{layout/main :: layout(~{::section})}">
 
 <body>
     <section>
@@ -10,7 +9,7 @@
                 <div class="card shadow-lg border-0">
                     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
                         <h4 class="mb-0">
-                            <i class="bi bi-book-half me-2"></i> 
+                            <i class="bi bi-book-half me-2"></i>
                             Detalle del Libro
                         </h4>
                         <a th:href="@{/libros}" class="btn btn-outline-light btn-sm">
@@ -22,26 +21,29 @@
                         <div class="row">
                             <div class="col-md-8">
                                 <h3 class="fw-bold mb-3" th:text="${libro.titulo}"></h3>
-                                
+
                                 <div class="mb-3">
-                                    <strong>Autor:</strong> 
-                                    <span th:text="${libro.autor?.nombre + ' ' + libro.autor?.apellido} ?: 'Sin autor registrado'"></span>
+                                    <strong>Autor:</strong>
+                                    <span
+                                        th:text="${libro.autor?.nombre + ' ' + libro.autor?.apellido} ?: 'Sin autor registrado'"></span>
                                 </div>
-                                
+
                                 <div class="mb-3">
-                                    <strong>Año:</strong> 
+                                    <strong>Año:</strong>
                                     <span th:text="${libro.añoPublicacion} ?: 'No especificado'"></span>
                                 </div>
-                                
+
                                 <div class="mb-3">
-                                    <strong>ISBN:</strong> 
+                                    <strong>ISBN:</strong>
                                     <span th:text="${libro.isbn}"></span>
                                 </div>
-                                
+
                                 <div class="mb-3">
-                                    <strong>Estado:</strong> 
-                                    <span th:if="${libro.disponible}" class="badge bg-success fs-6 px-3 py-2">Disponible</span>
-                                    <span th:unless="${libro.disponible}" class="badge bg-danger fs-6 px-3 py-2">Prestado</span>
+                                    <strong>Estado:</strong>
+                                    <span th:if="${libro.disponible}"
+                                        class="badge bg-success fs-6 px-3 py-2">Disponible</span>
+                                    <span th:unless="${libro.disponible}"
+                                        class="badge bg-danger fs-6 px-3 py-2">Prestado</span>
                                 </div>
 
                                 <div class="mb-4" th:if="${libro.sinopsis}">
@@ -51,13 +53,11 @@
 
                                 <!-- Acciones ADMIN -->
                                 <div class="mt-4" sec:authorize="hasRole('ADMIN')">
-                                    <a th:href="@{/libros/{id}/editar(id=${libro.id})}" 
-                                       class="btn btn-warning me-2">
+                                    <a th:href="@{/libros/{id}/editar(id=${libro.id})}" class="btn btn-warning me-2">
                                         <i class="bi bi-pencil-square"></i> Editar
                                     </a>
-                                    <a th:href="@{/libros/{id}/eliminar(id=${libro.id})}" 
-                                       class="btn btn-danger"
-                                       th:attr="onclick=|return confirm('¿Eliminar ${libro.titulo}?')|">
+                                    <a th:href="@{/libros/{id}/eliminar(id=${libro.id})}" class="btn btn-danger"
+                                        th:attr="onclick=|return confirm('¿Eliminar ${libro.titulo}?')|">
                                         <i class="bi bi-trash"></i> Eliminar
                                     </a>
                                 </div>
@@ -65,21 +65,22 @@
 
                             <!-- Acciones de préstamo -->
                             <div class="col-md-4 text-center">
-                                <div class="bg-light border rounded p-4 mb-4" style="height: 300px; display: flex; align-items: center; justify-content: center;">
+                                <div class="bg-light border rounded p-4 mb-4"
+                                    style="height: 300px; display: flex; align-items: center; justify-content: center;">
                                     <i class="bi bi-book display-1 text-secondary"></i>
                                 </div>
 
                                 <!-- Solicitar préstamo (logueado + disponible) -->
                                 <a th:if="${libro.disponible and #authorization.expression('isAuthenticated()')}"
-                                   th:href="@{/prestamos/solicitar/{id}(id=${libro.id})}"
-                                   class="btn btn-success btn-lg w-100">
+                                    th:href="@{/prestamos/solicitar/{id}(id=${libro.id})}"
+                                    class="btn btn-success btn-lg w-100">
                                     <i class="bi bi-journal-bookmark"></i> Solicitar Préstamo
                                 </a>
 
                                 <!-- Mensaje si disponible pero no logueado -->
-                                <div th:if="${libro.disponible and !#authorization.expression('isAuthenticated()')}" 
-                                     class="alert alert-info mt-3">
-                                    <i class="bi bi-lock"></i> 
+                                <div th:if="${libro.disponible and !#authorization.expression('isAuthenticated()')}"
+                                    class="alert alert-info mt-3">
+                                    <i class="bi bi-lock"></i>
                                     <a href="/login">Inicia sesión</a> para solicitar préstamo
                                 </div>
 
@@ -99,4 +100,5 @@
         </div>
     </section>
 </body>
+
 </html>

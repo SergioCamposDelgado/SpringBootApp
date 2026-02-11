@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/main :: layout(~{::section})}">
+
+<body>
+    <section>
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                <div class="card shadow">
+                    <div class="card-header bg-warning text-dark">
+                        <h4 class="mb-0">
+                            <i class="bi bi-pencil-square"></i>
+                            Editar Préstamo #<span th:text="${prestamo.id}"></span>
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/prestamos/editar}" method="post">
+                            <input type="hidden" name="id" th:value="${prestamo.id}" />
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Usuario</label>
+                                    <select name="usuario.id" class="form-select" required>
+                                        <option th:each="u : ${usuarios}" th:value="${u.id}"
+                                            th:text="${u.nombreCompleto} + ' (' + ${u.email} + ')'"
+                                            th:selected="${u.id == prestamo.usuario.id}"></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Libro</label>
+                                    <select name="libro.id" class="form-select" required>
+                                        <option th:each="l : ${libros}" th:value="${l.id}" th:text="${l.titulo}"
+                                            th:selected="${l.id == prestamo.libro.id}"></option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Fecha Préstamo</label>
+                                    <input type="date" name="fechaPrestamo"
+                                        th:value="${prestamo.fechaPrestamo != null} ? ${#temporals.format(prestamo.fechaPrestamo, 'yyyy-MM-dd')} : ''"
+                                        class="form-control" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Fecha Prevista Devolución</label>
+                                    <input type="date" name="fechaDevolucionPrevista"
+                                        th:value="${prestamo.fechaDevolucionPrevista != null} ? ${#temporals.format(prestamo.fechaDevolucionPrevista, 'yyyy-MM-dd')} : ''"
+                                        class="form-control" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Fecha Real Devolución</label>
+                                <input type="date" name="fechaDevolucionReal"
+                                    th:value="${prestamo.fechaDevolucionReal != null} ? ${#temporals.format(prestamo.fechaDevolucionReal, 'yyyy-MM-dd')} : ''"
+                                    class="form-control">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Estado</label>
+                                <select name="estado" class="form-select" required>
+                                    <option
+                                        th:each="e : ${T(com.optativa.thymeleaf.entidad.Prestamo.EstadoPrestamo).values()}"
+                                        th:value="${e}" th:text="${e}"
+                                        th:selected="${prestamo.estado.name() == e.name()}"></option>
+                                </select>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <div class="d-flex justify-content-between">
+                                <a th:href="@{/prestamos}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left"></i> Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="bi bi-save"></i> Guardar Cambios
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

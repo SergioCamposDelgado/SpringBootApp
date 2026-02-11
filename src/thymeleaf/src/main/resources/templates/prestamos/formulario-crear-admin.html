@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/main :: layout(~{::section})}">
+
+<body>
+    <section>
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                <div class="card shadow">
+                    <div class="card-header bg-danger text-white">
+                        <h4 class="mb-0">
+                            <i class="bi bi-plus-circle"></i> Crear Préstamo Manual (ADMIN)
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/prestamos/crear}" method="post">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Usuario</label>
+                                <select name="usuario.id" class="form-select" required>
+                                    <option value="">Selecciona usuario...</option>
+                                    <option th:each="u : ${usuarios}" th:value="${u.id}"
+                                        th:text="${u.nombreCompleto} + ' (' + ${u.email} + ')'"></option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Libro</label>
+                                <select name="libro.id" class="form-select" required>
+                                    <option value="">Selecciona libro...</option>
+                                    <option th:each="l : ${librosDisponibles}" th:value="${l.id}"
+                                        th:text="${l.titulo} + ' - ' + ${l.autor?.nombre}"></option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Fecha de devolución prevista</label>
+                                <input type="date" name="fechaDevolucionPrevista" class="form-control" required>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <div class="d-flex justify-content-between">
+                                <a th:href="@{/prestamos}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left"></i> Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle"></i> Crear Préstamo
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

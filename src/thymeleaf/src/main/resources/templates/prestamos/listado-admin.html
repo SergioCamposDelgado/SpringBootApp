@@ -3,11 +3,11 @@
     th:replace="~{layout/main :: layout(~{::section})}">
 
 <body>
-    <section>
+    <section sec:authorize="hasRole('ADMIN')">
         <div class="d-flex justify-content-between mb-4 align-items-center">
-            <h2><i class="bi bi-journal-bookmark"></i> Mis Préstamos</h2>
-            <a th:href="@{/libros}" class="btn btn-outline-primary">
-                <i class="bi bi-arrow-left"></i> Volver al Catálogo
+            <h2><i class="bi bi-journal-bookmark-fill"></i> Gestión de Préstamos</h2>
+            <a th:href="@{/prestamos/nuevo}" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i> Nuevo Préstamo
             </a>
         </div>
 
@@ -21,7 +21,8 @@
                 <table class="table table-hover mb-0">
                     <thead class="table-dark">
                         <tr>
-                            <th>Título del Libro</th>
+                            <th>Usuario</th>
+                            <th>Libro</th>
                             <th>Fecha Préstamo</th>
                             <th>Fecha Prevista</th>
                             <th>Fecha Real</th>
@@ -31,6 +32,8 @@
                     </thead>
                     <tbody>
                         <tr th:each="prestamo : ${prestamos}">
+                            <td th:text="${prestamo.usuario.nombreCompleto} + ' (' + ${prestamo.usuario.email} + ')'">
+                            </td>
                             <td th:text="${prestamo.libro.titulo}"></td>
                             <td th:text="${#temporals.format(prestamo.fechaPrestamo, 'dd/MM/yyyy')}"></td>
                             <td th:text="${#temporals.format(prestamo.fechaDevolucionPrevista, 'dd/MM/yyyy')}"></td>
@@ -46,29 +49,31 @@
                                     <span th:case="*">Desconocido</span>
                                 </span>
                             </td>
-                            <td class="text-center">
-                                <a th:if="${prestamo.estado.name() == 'ACTIVO'}"
-                                    th:href="@{/prestamos/devolver/{id}(id=${prestamo.id})}"
-                                    class="btn btn-sm btn-outline-success me-1"
-                                    th:onclick="'return confirm(\\'¿Confirmas devolver ' + ${prestamo.libro.titulo} + '?\\')'"
-                                    title="Devolver">
-                                    <i class="bi bi-check-circle"></i> Devolver
-                                </a>
+							<td class="text-center">
+							    <div class="d-flex justify-content-center">
+							        <a th:href="@{/prestamos/{id}(id=${prestamo.id})}" class="btn btn-sm btn-outline-info me-1">
+							            <i class="bi bi-eye"></i>
+							        </a>
 
-                                <a th:if="${prestamo.estado.name() == 'ACTIVO'}"
-                                    th:href="@{/prestamos/cancelar/{id}(id=${prestamo.id})}"
-                                    class="btn btn-sm btn-outline-warning me-1"
-                                    th:onclick="'return confirm(\\'¿Cancelar préstamo de ' + ${prestamo.libro.titulo} + '?\\')'"
-                                    title="Cancelar">
-                                    <i class="bi bi-x-circle"></i> Cancelar
-                                </a>
+							        <a th:if="${prestamo.estado.name() == 'ACTIVO' or prestamo.estado.name() == 'VENCIDO'}"
+							           th:href="@{/prestamos/devolver/{id}(id=${prestamo.id})}"
+							           class="btn btn-sm btn-outline-success me-1"
+							           th:onclick="return confirm('¿Confirmar devolución?')">
+							            <i class="bi bi-check-circle"></i>
+							        </a>
 
+							        <a th:if="${prestamo.estado.name() == 'ACTIVO'}"
+							           th:href="@{/prestamos/cancelar/{id}(id=${prestamo.id})}"
+							           class="btn btn-sm btn-outline-warning me-1"
+							           th:onclick="return confirm('¿Cancelar préstamo?')">
+							            <i class="bi bi-x-circle"></i>
+							        </a>
 
-                                <a th:href="@{/prestamos/{id}(id=${prestamo.id})}" class="btn btn-sm btn-outline-info"
-                                    title="Ver detalle">
-                                    <i class="bi bi-eye"></i>
-                                </a>
-                            </td>
+							        <a th:href="@{/prestamos/{id}/editar(id=${prestamo.id})}" class="btn btn-sm btn-outline-primary">
+							            <i class="bi bi-pencil-square"></i>
+							        </a>
+							    </div>
+							</td>
                         </tr>
                     </tbody>
                 </table>
@@ -76,9 +81,7 @@
         </div>
 
         <div th:if="${#lists.isEmpty(prestamos)}" class="alert alert-info mt-4 text-center">
-            No tienes préstamos en este momento.
-            <br>
-            <a href="/libros" class="btn btn-primary mt-3">Explorar catálogo</a>
+            No hay préstamos registrados.
         </div>
     </section>
 </body>
