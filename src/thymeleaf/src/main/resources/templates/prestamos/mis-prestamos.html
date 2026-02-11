@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{layout/main :: layout(~{::section})}">
+
+<body>
+<section>
+    <div class="d-flex justify-content-between mb-4 align-items-center">
+        <h2><i class="bi bi-journal-bookmark"></i> Mis Préstamos</h2>
+        <a th:href="@{/libros}" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left"></i> Volver al Catálogo
+        </a>
+    </div>
+
+    <!-- Mensajes flash -->
+    <div th:if="${mensaje}" class="alert" th:classappend="${tipo} ? 'alert-' + ${tipo} : 'alert-info'" role="alert">
+        <span th:text="${mensaje}"></span>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Título del Libro</th>
+                        <th>Fecha Préstamo</th>
+                        <th>Fecha Devolución Prevista</th>
+                        <th>Estado</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="prestamo : ${prestamos}">
+                        <td th:text="${prestamo.libro.titulo}"></td>
+                        <td th:text="${prestamo.fechaPrestamo}"></td>
+                        <td th:text="${prestamo.fechaDevolucionPrevista}"></td>
+                        <td>
+                            <span th:switch="${prestamo.estado}">
+                                <span th:case="'ACTIVO'" class="badge bg-primary">Activo</span>
+                                <span th:case="'DEVUELTO'" class="badge bg-success">Devuelto</span>
+                                <span th:case="'VENCIDO'" class="badge bg-danger">Vencido</span>
+                                <span th:case="*">Desconocido</span>
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <!-- Botón Devolver (solo si está activo) -->
+                            <a th:if="${prestamo.estado == T(com.optativa.thymeleaf.entidad.Prestamo.EstadoPrestamo).ACTIVO}"
+                               th:href="@{/prestamos/devolver/{id}(id=${prestamo.id})}"
+                               class="btn btn-sm btn-outline-success"
+                               th:onclick="'return confirm(\\'¿Confirmas la devolución del libro ' + ${prestamo.libro.titulo} + '?\\')'"
+                               title="Devolver libro">
+                                <i class="bi bi-check-circle"></i> Devolver
+                            </a>
+
+                            <!-- Mensaje si ya devuelto -->
+                            <span th:if="${prestamo.estado == T(com.optativa.thymeleaf.entidad.Prestamo.EstadoPrestamo).DEVUELTO}"
+                                  class="text-muted small">
+                                Devuelto el <span th:text="${prestamo.fechaDevolucionReal}"></span>
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div th:if="${#lists.isEmpty(prestamos)}" class="alert alert-info mt-4 text-center">
+        No tienes préstamos activos en este momento.
+        <br>
+        <a href="/libros" class="btn btn-primary mt-3">Explorar catálogo</a>
+    </div>
+</section>
+</body>
+</html>

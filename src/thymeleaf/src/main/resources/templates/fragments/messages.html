@@ -1,0 +1,12 @@
+<div th:fragment="alerts">
+    <div th:if="${mensaje}" class="alert" th:classappend="${tipo} ? 'alert-' + ${tipo} : 'alert-info'" role="alert">
+        <span th:text="${mensaje}"></span>
+    </div>
+    
+    <!-- Errores globales o de Spring -->
+    <div th:if="${#fields.hasAnyErrors()}" class="alert alert-danger">
+        <ul>
+            <li th:each="err : ${#fields.allErrors()}" th:text="${err.defaultMessage}"></li>
+        </ul>
+    </div>
+</div>

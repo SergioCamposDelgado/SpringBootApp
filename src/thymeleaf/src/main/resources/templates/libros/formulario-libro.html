@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout/main :: layout(~{::section})}">
+
+<body>
+    <section>
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">
+                            <i class="bi bi-book"></i> 
+                            <span th:text="${libro.id == null ? 'Alta de Libro' : 'Edición de Libro'}"></span>
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/libros/guardar}" th:object="${libro}" method="post">
+                            <input type="hidden" th:field="*{id}">
+
+                            <div class="row">
+                                <div class="col-md-8 mb-3">
+                                    <label class="form-label font-weight-bold">Título *</label>
+                                    <input type="text" th:field="*{titulo}" class="form-control" 
+                                           th:classappend="${#fields.hasErrors('titulo')} ? 'is-invalid'" required>
+                                    <div class="invalid-feedback" th:each="err : ${#fields.errors('titulo')}" th:text="${err}"></div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label font-weight-bold">Año de publicación</label>
+                                    <input type="number" th:field="*{añoPublicacion}" class="form-control" 
+                                           th:classappend="${#fields.hasErrors('añoPublicacion')} ? 'is-invalid'">
+                                    <div class="invalid-feedback" th:each="err : ${#fields.errors('añoPublicacion')}" th:text="${err}"></div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label font-weight-bold">ISBN *</label>
+                                    <input type="text" th:field="*{isbn}" class="form-control" 
+                                           th:classappend="${#fields.hasErrors('isbn')} ? 'is-invalid'" required>
+                                    <div class="invalid-feedback" th:each="err : ${#fields.errors('isbn')}" th:text="${err}"></div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label font-weight-bold">Autor *</label>
+                                    <select th:field="*{autor.id}" class="form-select" required>
+                                        <option value="">Seleccione autor...</option>
+                                        <option th:each="autor : ${autores}" 
+                                                th:value="${autor.id}" 
+                                                th:text="${autor.nombre + ' ' + autor.apellido}"></option>
+                                    </select>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('autor')}">
+                                        <span th:errors="*{autor}"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label font-weight-bold">Sinopsis</label>
+                                <textarea th:field="*{sinopsis}" class="form-control" rows="4"></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label font-weight-bold">Disponible</label>
+                                <div class="form-check">
+                                    <input type="checkbox" th:field="*{disponible}" class="form-check-input" id="disponible">
+                                    <label class="form-check-label" for="disponible">Sí, está disponible para préstamo</label>
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <div class="d-flex justify-content-between">
+                                <a th:href="@{/libros}" class="btn btn-outline-secondary">Cancelar</a>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle"></i> Guardar Libro
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

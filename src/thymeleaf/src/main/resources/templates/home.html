@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{layout/main :: layout(~{::section})}">
+
+<body>
+    <section>
+        <div class="text-center py-5">
+            <h1 class="display-4">Bienvenido a la Biblioteca Online</h1>
+            <p class="lead text-muted mb-5">Explora nuestro catálogo sin necesidad de iniciar sesión</p>
+            
+            <a href="/libros" class="btn btn-primary btn-lg mb-4">
+                <i class="bi bi-books me-2"></i> Ver Catálogo de Libros
+            </a>
+
+            <!-- Mensaje para no logueados -->
+            <div sec:authorize="!isAuthenticated()" class="mt-4">
+                <p class="lead">¿Quieres pedir préstamos o ver tu historial?</p>
+                <a href="/login" class="btn btn-outline-primary me-2">Iniciar sesión</a>
+                <!-- Si tienes registro: <a href="/registro" class="btn btn-outline-success">Registrarse</a> -->
+            </div>
+
+            <!-- Mensaje para logueados -->
+            <div sec:authorize="isAuthenticated()">
+                <p class="lead">Hola, <span sec:authentication="name"></span>!</p>
+                <a href="/prestamos/mios" class="btn btn-outline-success">
+                    Ver Mis Préstamos
+                </a>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

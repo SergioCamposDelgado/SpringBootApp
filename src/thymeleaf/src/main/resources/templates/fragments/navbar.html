@@ -1,0 +1,65 @@
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Biblioteca Online</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <!-- Enlaces principales (siempre visibles para todos) -->
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/libros">Catálogo</a>
+                </li>
+            </ul>
+
+            <!-- Zona derecha: login / usuario / logout -->
+            <ul class="navbar-nav ms-auto align-items-center">
+                <!-- Caso 1: NO autenticado → solo muestra botón Iniciar sesión -->
+                <li class="nav-item" sec:authorize="!isAuthenticated()">
+                    <a class="nav-link btn btn-outline-secondary btn-sm px-4 py-2" href="/login">
+                        Iniciar sesión
+                    </a>
+                </li>
+
+                <!-- Caso 2: Autenticado → muestra nombre + dropdown -->
+                <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" 
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle me-1"></i>
+                        <span sec:authentication="name">Usuario</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <!-- Mis Préstamos (para LECTOR y ADMIN) -->
+                        <li sec:authorize="hasAnyRole('LECTOR', 'ADMIN')">
+                            <a class="dropdown-item" href="/prestamos/mios">
+                                <i class="bi bi-journal-bookmark me-2"></i> Mis Préstamos
+                            </a>
+                        </li>
+
+                        <!-- Añadir Libro (solo ADMIN) -->
+                        <li sec:authorize="hasRole('ADMIN')">
+                            <a class="dropdown-item" href="/libros/nuevo">
+                                <i class="bi bi-plus-circle me-2"></i> Añadir Libro
+                            </a>
+                        </li>
+
+                        <!-- Separador -->
+                        <li><hr class="dropdown-divider"></li>
+
+                        <!-- Cerrar sesión (POST + token CSRF si aplica) -->
+                        <li>
+                            <form th:action="@{/logout}" method="post" class="m-0">
+                                <!-- Token CSRF (obligatorio si CSRF está activado en SecurityConfig) -->
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
