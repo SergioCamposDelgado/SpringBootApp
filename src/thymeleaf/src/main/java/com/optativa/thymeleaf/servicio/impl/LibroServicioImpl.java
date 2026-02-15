@@ -5,6 +5,8 @@ import com.optativa.thymeleaf.repositorio.LibroRepositorio;
 import com.optativa.thymeleaf.servicio.LibroServicio;
 
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -85,5 +87,37 @@ public class LibroServicioImpl implements LibroServicio {
     @Override
     public List<Libro> obtenerLibrosDisponibles() {
         return libroRepositorio.findByDisponibleTrue();
+    }
+    
+    /**
+     * Recupera el catálogo de libros de forma paginada.
+     * @param pageable Objeto con la configuración de paginación (página, tamaño, orden).
+     * @return Un objeto Page con los libros correspondientes a la solicitud.
+     */
+    @Override
+    public Page<Libro> obtenerTodosLosLibros(Pageable pageable) {
+        return libroRepositorio.findAll(pageable);
+    }
+
+    /**
+     * Realiza una búsqueda paginada de libros cuyo título contenga la cadena especificada.
+     * La búsqueda ignora mayúsculas y minúsculas.
+     * @param titulo Texto a buscar dentro de los títulos de los libros.
+     * @param pageable Configuración de la paginación.
+     * @return Una página de libros que coinciden con el criterio de búsqueda.
+     */
+    @Override
+    public Page<Libro> buscarPorTitulo(String titulo, Pageable pageable) {
+        return libroRepositorio.findByTituloContainingIgnoreCase(titulo, pageable);
+    }
+    
+    /**
+     * Localiza un libro en la base de datos utilizando su código ISBN único.
+     * @param isbn El ISBN del libro a buscar.
+     * @return Un Optional que contiene el libro si se encuentra, o vacío si no existe.
+     */
+    @Override
+    public Optional<Libro> obtenerLibroPorIsbn(String isbn) {
+        return libroRepositorio.findByIsbn(isbn); 
     }
 }

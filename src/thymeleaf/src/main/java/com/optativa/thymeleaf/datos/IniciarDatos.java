@@ -25,9 +25,9 @@ import java.util.*;
 public class IniciarDatos {
 
     // Constantes para controlar cuántos registros crear
-    private static final int NUM_AUTORES    = 8;
-    private static final int NUM_CATEGORIAS = 6;
-    private static final int NUM_LIBROS     = 25;
+    private static final int NUM_AUTORES    = 10;
+    private static final int NUM_CATEGORIAS = 10;
+    private static final int NUM_LIBROS     = 40;
     private static final int NUM_USUARIOS   = 5;
     private static final int NUM_PRESTAMOS  = 10;
 

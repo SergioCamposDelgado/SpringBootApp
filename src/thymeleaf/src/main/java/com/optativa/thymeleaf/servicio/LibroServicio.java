@@ -4,6 +4,9 @@ import com.optativa.thymeleaf.entidad.Libro;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 /**
  * Interfaz que define las operaciones de negocio para la entidad **Libro**.
  * * Propósito:
@@ -53,4 +56,26 @@ public interface LibroServicio {
      * @return Lista de libros con estado disponible = true.
      */
     List<Libro> obtenerLibrosDisponibles();
+    
+    /**
+     * Obtiene una lista paginada de todos los libros registrados.
+     * @param pageable Información de paginación.
+     * @return Página de libros.
+     */
+    Page<Libro> obtenerTodosLosLibros(Pageable pageable);
+
+    /**
+     * Busca libros por título con soporte para paginación.
+     * @param titulo Fragmento del título a filtrar.
+     * @param pageable Información de paginación.
+     * @return Página de libros filtrados.
+     */
+    Page<Libro> buscarPorTitulo(String titulo, Pageable pageable);
+    
+    /**
+     * Busca un libro específico por su identificador ISBN.
+     * @param isbn Código ISBN único.
+     * @return El libro encontrado encapsulado en un Optional.
+     */
+    Optional<Libro> obtenerLibroPorIsbn(String isbn);
 }

@@ -4,6 +4,9 @@ import com.optativa.thymeleaf.entidad.Libro;
 import com.optativa.thymeleaf.servicio.*;
 import jakarta.validation.Valid;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -46,14 +49,24 @@ public class LibroController {
      * Accesible para usuarios autenticados (LECTOR) y ADMIN
      * También accesible sin login (según SecurityConfig)
      */
-    @GetMapping                          // → /libros
-    public String listarLibros(Model model) {
-        // Cargamos todos los libros (normalmente con paginación en proyectos reales)
-        model.addAttribute("libros", libroServicio.obtenerTodosLosLibros());
-        
+    @GetMapping
+    public String listarLibros(
+            Model model,
+            @PageableDefault(size = 10, sort = "titulo") Pageable pageable,
+            @RequestParam(required = false) String keyword) {
+
+        Page<Libro> page;
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            page = libroServicio.buscarPorTitulo(keyword, pageable);
+        } else {
+            page = libroServicio.obtenerTodosLosLibros(pageable);
+        }
+
+        model.addAttribute("libros", page.getContent()); // Los libros de la página actual
+        model.addAttribute("page", page);               // El objeto Page completo para la vista
+        model.addAttribute("keyword", keyword);         // Para mantener el texto en el buscador
         model.addAttribute("titulo", "Catálogo de Libros");
-        
-        // Vista: templates/libros/lista-libros.html
+
         return "libros/lista-libros";
     }
 
@@ -123,20 +136,28 @@ public class LibroController {
      * Uso de RedirectAttributes + flash → patrón PRG (Post/Redirect/Get)
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/guardar")                    // → /libros/guardar (POST)
+    @PostMapping("/guardar")
     public String guardarLibro(
-            @Valid @ModelAttribute Libro libro,     // binding automático + validación
-            BindingResult bindingResult,            // contiene errores de validación
-            RedirectAttributes flash) {             // para mensajes flash tras redirección
+            @Valid @ModelAttribute Libro libro,
+            BindingResult bindingResult,
+            Model model, // Añadimos Model para recargar las listas si hay error
+            RedirectAttributes flash) {
 
-        // Si hay errores de validación → volvemos al formulario (sin redirect)
+        // 1. Validación personalizada: ¿Existe ya el ISBN?
+        // Solo comprobamos si es un libro nuevo (id == null) o si el ID es diferente al que tiene ese ISBN
+        Optional<Libro> libroExistente = libroServicio.obtenerLibroPorIsbn(libro.getIsbn());
+        
+        if (libroExistente.isPresent() && !libroExistente.get().getId().equals(libro.getId())) {
+            bindingResult.rejectValue("isbn", "error.libro", "Este ISBN ya está registrado en el sistema");
+        }
+
+        // 2. Si hay errores (de Bean Validation o el nuestro manual)
         if (bindingResult.hasErrors()) {
-            // Es importante NO hacer redirect aquí, porque perdemos los errores y el objeto
-            // Spring re-popula automáticamente los campos con @ModelAttribute
-            
-            // Nota: en esta vista deberías tener también las listas de autores y categorías
-            // Si no las agregas aquí, el formulario quedará sin opciones al volver con error
-            // Solución común → usar @ModelAttribute en métodos separados o un @ControllerAdvice
+            // IMPORTANTE: Debes volver a cargar las listas de autores y categorías 
+            // para que el select no aparezca vacío al recargar la vista con errores
+            model.addAttribute("autores", autorServicio.obtenerTodosLosAutores());
+            model.addAttribute("categorias", categoriaServicio.obtenerTodasLasCategorias());
+            model.addAttribute("titulo", libro.getId() == null ? "Nuevo Libro" : "Editar Libro");
             return "libros/formulario-libro";
         }
 
@@ -145,12 +166,10 @@ public class LibroController {
             flash.addFlashAttribute("mensaje", "Libro guardado correctamente");
             flash.addFlashAttribute("tipo", "success");
         } catch (Exception e) {
-            flash.addFlashAttribute("mensaje", "Error al guardar el libro: " + e.getMessage());
+            flash.addFlashAttribute("mensaje", "Error inesperado: " + e.getMessage());
             flash.addFlashAttribute("tipo", "danger");
-            // Aquí también podrías volver al formulario preservando datos, pero es más complejo
         }
 
-        // Siempre redirigimos después de POST → evita reenvío del formulario (F5)
         return "redirect:/libros";
     }
 
